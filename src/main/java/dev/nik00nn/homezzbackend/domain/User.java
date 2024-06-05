@@ -25,7 +25,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column( nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -42,6 +42,10 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private File profilePicture;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")

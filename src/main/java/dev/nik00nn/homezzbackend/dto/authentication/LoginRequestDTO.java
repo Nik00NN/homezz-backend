@@ -1,4 +1,4 @@
-package dev.nik00nn.homezzbackend.dto;
+package dev.nik00nn.homezzbackend.dto.authentication;
 
 
 import lombok.AllArgsConstructor;

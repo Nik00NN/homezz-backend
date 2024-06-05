@@ -1,8 +1,8 @@
 package dev.nik00nn.homezzbackend.service.authentication;
 
-import dev.nik00nn.homezzbackend.dto.LoginRequestDTO;
-import dev.nik00nn.homezzbackend.dto.LoginResponseDTO;
-import dev.nik00nn.homezzbackend.dto.RegisterRequestDTO;
+import dev.nik00nn.homezzbackend.dto.authentication.LoginRequestDTO;
+import dev.nik00nn.homezzbackend.dto.authentication.LoginResponseDTO;
+import dev.nik00nn.homezzbackend.dto.authentication.RegisterRequestDTO;
 import dev.nik00nn.homezzbackend.dto.CreatedUserDTO;
 
 public interface IAuthenticationService {

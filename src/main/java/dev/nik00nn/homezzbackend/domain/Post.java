@@ -44,8 +44,6 @@ public class Post {
     @Column(nullable = false)
     private int constructionYear;
 
-    private String presentationVideoUrl;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PostType type;

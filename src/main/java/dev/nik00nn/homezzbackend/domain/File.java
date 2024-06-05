@@ -26,7 +26,7 @@ public class File {
     private String fileTitle;
 
     @Column(name = "file_content",nullable = false)
-    private String fileContent;
+    private byte[] fileContent;
 
     @Column(name = "file_creation_date", nullable = false)
     private LocalDate creationDate;

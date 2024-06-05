@@ -2,9 +2,9 @@ package dev.nik00nn.homezzbackend.service.authentication;
 
 import dev.nik00nn.homezzbackend.domain.User;
 import dev.nik00nn.homezzbackend.domain.UserRole;
-import dev.nik00nn.homezzbackend.dto.LoginRequestDTO;
-import dev.nik00nn.homezzbackend.dto.LoginResponseDTO;
-import dev.nik00nn.homezzbackend.dto.RegisterRequestDTO;
+import dev.nik00nn.homezzbackend.dto.authentication.LoginRequestDTO;
+import dev.nik00nn.homezzbackend.dto.authentication.LoginResponseDTO;
+import dev.nik00nn.homezzbackend.dto.authentication.RegisterRequestDTO;
 import dev.nik00nn.homezzbackend.dto.CreatedUserDTO;
 import dev.nik00nn.homezzbackend.exception.BadRequestException;
 import dev.nik00nn.homezzbackend.repository.IUserRepository;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 @Service
-public class AuthenticationService implements IAuthenticationService{
+public class AuthenticationService implements IAuthenticationService {
 
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -38,13 +38,14 @@ public class AuthenticationService implements IAuthenticationService{
 
     @Override
     public CreatedUserDTO register(RegisterRequestDTO request) {
-        if(userRepository.existsByUsername(request.getUsername())) throw new BadRequestException("Username already exists");
+        if (userRepository.existsByUsername(request.getUsername()))
+            throw new BadRequestException("Username already exists");
 
         User user = User.builder().username(request.getUsername()).password(passwordEncoder.encode(request.getPassword())).emailAddress(request.getEmailAddress())
-                        .phoneNumber(request.getPhoneNumber())
-                        .address(request.getAddress())
-                        .posts(new ArrayList<>())
-                        .role(UserRole.USER).build();
+                .phoneNumber(request.getPhoneNumber())
+                .address(request.getAddress())
+                .posts(new ArrayList<>())
+                .role(UserRole.USER).build();
 
         userRepository.save(user);
 
@@ -53,7 +54,7 @@ public class AuthenticationService implements IAuthenticationService{
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
-        Authentication authentication =  authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()));
