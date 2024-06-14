@@ -2,7 +2,9 @@ package dev.nik00nn.homezzbackend.service.file;
 
 
 import dev.nik00nn.homezzbackend.domain.File;
+import dev.nik00nn.homezzbackend.domain.ProfilePhoto;
 import dev.nik00nn.homezzbackend.repository.IFileRepository;
+import dev.nik00nn.homezzbackend.repository.IProfilePhotoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,9 +15,11 @@ import java.time.LocalDate;
 public class FileService implements IFileService {
 
     private final IFileRepository fileRepository;
+    private final IProfilePhotoRepository profilePhotoRepository;
 
-    public FileService(IFileRepository fileRepository) {
+    public FileService(IFileRepository fileRepository, IProfilePhotoRepository profilePhotoRepository) {
         this.fileRepository = fileRepository;
+        this.profilePhotoRepository = profilePhotoRepository;
     }
 
     @Override
@@ -44,5 +48,17 @@ public class FileService implements IFileService {
         } else{
             return saveImage(file);
         }
+    }
+
+    @Override
+    public ProfilePhoto saveProfilePhoto(MultipartFile file) throws IOException {
+        ProfilePhoto photoToCreate = new ProfilePhoto();
+
+        photoToCreate.setFilename(file.getOriginalFilename());
+        photoToCreate.setCreationDate(LocalDate.now());
+        photoToCreate.setFileContent(file.getBytes());
+        photoToCreate.setFileTitle(file.getName());
+
+        return profilePhotoRepository.save(photoToCreate);
     }
 }

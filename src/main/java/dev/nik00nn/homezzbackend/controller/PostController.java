@@ -1,14 +1,13 @@
 package dev.nik00nn.homezzbackend.controller;
 
 import dev.nik00nn.homezzbackend.dto.PostDTO;
-import dev.nik00nn.homezzbackend.dto.create.CreatePostDTO;
 import dev.nik00nn.homezzbackend.service.post.PostService;
-import dev.nik00nn.homezzbackend.service.user.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,9 +20,9 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestPart CreatePostDTO request,@RequestParam("photos") List<MultipartFile> files) throws IOException {
-        return ResponseEntity.ok(postService.createPost(request,files));
+    @GetMapping()
+    public ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size){
+        List<PostDTO> allPosts = postService.getAll(page,size);
+        return ResponseEntity.ok().body(allPosts);
     }
-
 }

@@ -1,6 +1,5 @@
 package dev.nik00nn.homezzbackend.domain;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +24,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column( nullable = false)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -43,12 +42,14 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private File profilePicture;
+    private ProfilePhoto profilePicture;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Post> posts;
 
     @Override
@@ -60,7 +61,6 @@ public class User implements UserDetails {
     public boolean isAccountNonExpired() {
         return true;
     }
-
 
     @Override
     public boolean isAccountNonLocked() {

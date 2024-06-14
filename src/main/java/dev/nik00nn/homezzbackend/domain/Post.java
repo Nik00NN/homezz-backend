@@ -1,6 +1,5 @@
 package dev.nik00nn.homezzbackend.domain;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -52,12 +51,11 @@ public class Post {
     @Column(nullable = false)
     private PropertyType propertyType;
 
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(
-            name = "posts_files",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "file_id")
-    )
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
     private List<File> photos;
 }

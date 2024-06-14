@@ -3,16 +3,16 @@ package dev.nik00nn.homezzbackend.controller;
 import dev.nik00nn.homezzbackend.domain.File;
 import dev.nik00nn.homezzbackend.service.file.FileService;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping("/api/files")
 public class FileController {
 
     private final FileService fileService;
@@ -21,10 +21,10 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @GetMapping
-    public ResponseEntity<byte[]> getImage(@PathVariable Long imageId){
+    @GetMapping("/{imageId}")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long imageId) {
         File image = fileService.getImageById(imageId);
-        if(image == null){
+        if (image == null) {
             return ResponseEntity.notFound().build();
         }
         HttpHeaders headers = new HttpHeaders();
@@ -40,6 +40,6 @@ public class FileController {
                 .noTransform()
                 .mustRevalidate());
         headers.setAccessControlExposeHeaders(Collections.singletonList(HttpHeaders.CONTENT_DISPOSITION));
-        return new ResponseEntity<>(image.getFileContent(),headers,HttpStatus.OK);
+        return new ResponseEntity<>(image.getFileContent(), headers, HttpStatus.OK);
     }
 }

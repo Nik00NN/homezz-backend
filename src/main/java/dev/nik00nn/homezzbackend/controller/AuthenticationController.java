@@ -1,22 +1,21 @@
 package dev.nik00nn.homezzbackend.controller;
 
+import dev.nik00nn.homezzbackend.dto.UserDTO;
 import dev.nik00nn.homezzbackend.dto.authentication.LoginRequestDTO;
 import dev.nik00nn.homezzbackend.dto.authentication.LoginResponseDTO;
 import dev.nik00nn.homezzbackend.dto.authentication.RegisterRequestDTO;
-import dev.nik00nn.homezzbackend.dto.CreatedUserDTO;
 import dev.nik00nn.homezzbackend.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URI;
+import java.io.IOException;
 
 @RestController
+@Validated
 @RequestMapping("/api/authentication")
 public class AuthenticationController {
 
@@ -29,15 +28,12 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO request){
         LoginResponseDTO response = authService.login(request);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        System.out.println(principal);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<CreatedUserDTO> register(@RequestBody @Valid RegisterRequestDTO request){
-        CreatedUserDTO userCreated = authService.register(request);
-        return ResponseEntity.created(URI.create("/api/users/" + userCreated.getId())).body(userCreated);
+    @PostMapping(value = "/register",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> register(@Valid @RequestPart RegisterRequestDTO request, @RequestParam("profilePhoto") MultipartFile file) throws IOException {
+        UserDTO createdUser = authService.register(request, file);
+        return ResponseEntity.ok().body(createdUser);
     }
 }
