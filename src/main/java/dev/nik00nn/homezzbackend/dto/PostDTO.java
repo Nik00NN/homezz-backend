@@ -19,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PostDTO {
+    private Long id;
     private LocalDate creationDate;
     private String title;
     private String description;
@@ -29,4 +30,5 @@ public class PostDTO {
     private PostType type;
     private PropertyType propertyType;
     private List<File> photos;
+    private String username;
 }

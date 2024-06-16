@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService implements IPostService{
@@ -31,9 +32,17 @@ public class PostService implements IPostService{
         List<PostDTO> allPostsDTO = new ArrayList<>();
 
         for(Post post : pagedResult.getContent()){
-            allPostsDTO.add(modelMapper.map(post, PostDTO.class));
+            PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+            postDTO.setUsername(post.getUser().getUsername());
+            allPostsDTO.add(postDTO);
         }
 
         return allPostsDTO;
+    }
+
+    @Override
+    public PostDTO getById(Long id) {
+        Optional<Post> postByIdOptional = postRepository.findById(id);
+        return postByIdOptional.map(post -> modelMapper.map(post, PostDTO.class)).orElse(null);
     }
 }

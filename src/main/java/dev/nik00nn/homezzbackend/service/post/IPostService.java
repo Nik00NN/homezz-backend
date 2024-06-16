@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IPostService {
     List<PostDTO> getAll(int page,int size);
+    PostDTO getById(Long id);
+
 }

@@ -1,8 +1,7 @@
 package dev.nik00nn.homezzbackend.service.user;
 
 import dev.nik00nn.homezzbackend.domain.User;
-import dev.nik00nn.homezzbackend.dto.CreatePostDTO;
-import dev.nik00nn.homezzbackend.dto.UserDTO;
+import dev.nik00nn.homezzbackend.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,4 +12,9 @@ public interface IUserService {
     Optional<User> getCurrentUser();
     UserDTO getUserByUsername(String username);
     UserDTO addPost(String username, CreatePostDTO createPostRequest, List<MultipartFile> photos) throws IOException;
+    String getProfilePhoto(String username);
+    UserProfileDTO getUserProfile(String username);
+    List<PostDTO> getPosts(String username);
+    void deletePost( Long postId);
 }
+
