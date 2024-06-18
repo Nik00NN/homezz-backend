@@ -16,5 +16,10 @@ public interface IUserService {
     UserProfileDTO getUserProfile(String username);
     List<PostDTO> getPosts(String username);
     void deletePost( Long postId);
+    void addPostToFavorite(String username, Long postId);
+    List<PostDTO> getAllFavoritePosts(String username);
+    Boolean isFavorite(String username, Long postId);
+    void deletePostFromFavorite(String username, Long postId);
+    void update(UserDTO updatedUser);
 }
 

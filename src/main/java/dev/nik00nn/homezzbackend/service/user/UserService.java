@@ -128,5 +128,60 @@ public class UserService implements IUserService {
         postRepository.deleteById(postId);
     }
 
+    @Override
+    public void addPostToFavorite(String username, Long postId) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (userOptional.isPresent() && postOptional.isPresent()) {
+            User user = userOptional.get();
+            Post post = postOptional.get();
+            user.getFavoritePosts().add(post);
+            userRepository.save(user);
+        }
+    }
 
+    @Override
+    public List<PostDTO> getAllFavoritePosts(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        List<PostDTO> postDTOs = new ArrayList<>();
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            List<Post> posts = user.getFavoritePosts();
+            for (Post post : posts) {
+                PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+                postDTO.setUsername(post.getUser().getUsername());
+                postDTOs.add(postDTO);
+            }
+        }
+        return postDTOs;
+    }
+
+    @Override
+    public Boolean isFavorite(String username, Long postId) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (userOptional.isPresent() && postOptional.isPresent()) {
+            User user = userOptional.get();
+            Post post = postOptional.get();
+            return user.getFavoritePosts().contains(post);
+        }
+        return false;
+    }
+
+    @Override
+    public void deletePostFromFavorite(String username, Long postId) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (userOptional.isPresent() && postOptional.isPresent()) {
+            User user = userOptional.get();
+            Post post = postOptional.get();
+            user.getFavoritePosts().remove(post);
+            userRepository.save(user);
+        }
+    }
+
+    @Override
+    public void update(UserDTO updatedUser) {
+
+    }
 }
