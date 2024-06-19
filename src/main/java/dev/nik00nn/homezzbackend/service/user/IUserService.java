@@ -21,5 +21,6 @@ public interface IUserService {
     Boolean isFavorite(String username, Long postId);
     void deletePostFromFavorite(String username, Long postId);
     void update(UserDTO updatedUser);
+    User getUserByEmail(String email);
 }
 

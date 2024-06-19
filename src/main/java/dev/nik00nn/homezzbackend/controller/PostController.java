@@ -1,6 +1,8 @@
 package dev.nik00nn.homezzbackend.controller;
 
 import dev.nik00nn.homezzbackend.domain.File;
+import dev.nik00nn.homezzbackend.domain.PostType;
+import dev.nik00nn.homezzbackend.domain.PropertyType;
 import dev.nik00nn.homezzbackend.dto.PostDTO;
 import dev.nik00nn.homezzbackend.service.post.PostService;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +23,16 @@ public class PostController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size){
-        List<PostDTO> allPosts = postService.getAll(page,size);
-        return ResponseEntity.ok().body(allPosts);
+    public List<PostDTO> getAllPosts(
+            @RequestParam(required = false) PropertyType propertyType,
+            @RequestParam(required = false) PostType postType,
+            @RequestParam(required = false) Integer numberOfRooms,
+            @RequestParam(required = false) Integer usefulSurface,
+            @RequestParam(required = false) Integer constructionYear,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        return postService.getAll(propertyType, postType, numberOfRooms, usefulSurface, constructionYear, page, size);
     }
 
     @GetMapping("/{postId}/files")

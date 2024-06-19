@@ -2,6 +2,8 @@ package dev.nik00nn.homezzbackend.service.post;
 
 
 import dev.nik00nn.homezzbackend.domain.Post;
+import dev.nik00nn.homezzbackend.domain.PostType;
+import dev.nik00nn.homezzbackend.domain.PropertyType;
 import dev.nik00nn.homezzbackend.dto.PostDTO;
 import dev.nik00nn.homezzbackend.repository.IPostRepository;
 import org.modelmapper.ModelMapper;
@@ -25,13 +27,12 @@ public class PostService implements IPostService{
         this.modelMapper = modelMapper;
     }
 
-    @Override
-    public List<PostDTO> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page,size);
-        Page<Post> pagedResult = postRepository.findAll(pageable);
+    public List<PostDTO> getAll(PropertyType propertyType, PostType postType, Integer numberOfRooms, Integer usefulSurface, Integer constructionYear, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> pagedResult = postRepository.filterPosts(propertyType, postType, numberOfRooms, usefulSurface, constructionYear, pageable);
         List<PostDTO> allPostsDTO = new ArrayList<>();
 
-        for(Post post : pagedResult.getContent()){
+        for (Post post : pagedResult.getContent()) {
             PostDTO postDTO = modelMapper.map(post, PostDTO.class);
             postDTO.setUsername(post.getUser().getUsername());
             allPostsDTO.add(postDTO);

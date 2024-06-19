@@ -184,4 +184,10 @@ public class UserService implements IUserService {
     public void update(UserDTO updatedUser) {
 
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmailAddress(email);
+        return userOptional.orElse(null);
+    }
 }
