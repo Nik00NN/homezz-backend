@@ -15,8 +15,12 @@ public interface IPostRepository extends JpaRepository<Post,Long> {
     @Query("SELECT p FROM Post p WHERE " +
             "(:propertyType IS NULL OR p.propertyType = :propertyType) AND " +
             "(:postType IS NULL OR p.type = :postType) AND " +
-            "(:numberOfRooms IS NULL OR p.numberOfRooms = :numberOfRooms) AND " +
-            "(:usefulSurface IS NULL OR p.usefulSurface = :usefulSurface) AND " +
+            "(:numberOfRooms IS NULL OR (p.numberOfRooms = :numberOfRooms OR (p.numberOfRooms >= 3 AND :numberOfRooms = 3))) AND " +
+            "(:usefulSurface IS NULL OR " +
+            "(p.usefulSurface <= 50 AND :usefulSurface = 50) OR " +
+            "(p.usefulSurface > 50 AND p.usefulSurface <= 100 AND :usefulSurface = 100) OR " +
+            "(p.usefulSurface > 100 AND p.usefulSurface <= 150 AND :usefulSurface = 150) OR " +
+            "(p.usefulSurface > 150 AND :usefulSurface = 200)) AND " +
             "(:constructionYear IS NULL OR p.constructionYear = :constructionYear)")
     Page<Post> filterPosts(
             @Param("propertyType") PropertyType propertyType,
