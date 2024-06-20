@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface IUserService {
     Optional<User> getCurrentUser();
-    UserDTO getUserByUsername(String username);
+    User getUserByUsername(String username);
     UserDTO addPost(String username, CreatePostDTO createPostRequest, List<MultipartFile> photos) throws IOException;
     String getProfilePhoto(String username);
     UserProfileDTO getUserProfile(String username);
@@ -20,7 +20,8 @@ public interface IUserService {
     List<PostDTO> getAllFavoritePosts(String username);
     Boolean isFavorite(String username, Long postId);
     void deletePostFromFavorite(String username, Long postId);
-    void update(UserDTO updatedUser);
+    void update(String username,UserProfileDetailsDTO profileDetails);
     User getUserByEmail(String email);
+    void updateProfilePicture(String username, MultipartFile profilePicture) throws IOException;
 }
 

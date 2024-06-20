@@ -46,7 +46,7 @@ public class User implements UserDetails {
     private AccountType accountType;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "profilePicture_id",referencedColumnName = "id")
     private ProfilePhoto profilePicture;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

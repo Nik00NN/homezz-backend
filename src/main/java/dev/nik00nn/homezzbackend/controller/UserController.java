@@ -3,7 +3,10 @@ package dev.nik00nn.homezzbackend.controller;
 
 import dev.nik00nn.homezzbackend.domain.File;
 import dev.nik00nn.homezzbackend.domain.Post;
+import dev.nik00nn.homezzbackend.domain.ProfilePhoto;
+import dev.nik00nn.homezzbackend.domain.User;
 import dev.nik00nn.homezzbackend.dto.*;
+import dev.nik00nn.homezzbackend.service.file.FileService;
 import dev.nik00nn.homezzbackend.service.user.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +22,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final FileService fileService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FileService fileService) {
         this.userService = userService;
+        this.fileService = fileService;
     }
 
     @GetMapping("/{username}/files")
@@ -81,10 +86,18 @@ public class UserController {
         return ResponseEntity.ok().body(allFavoritePosts);
     }
 
-    @PutMapping("/{username}")
-    public ResponseEntity<?> updateUser(@RequestBody UserDTO request) {
-        userService.update(request);
+    @PutMapping("/{username}/edit-profile")
+    public ResponseEntity<?> updateUserProfileDetails(@PathVariable String username,@RequestBody UserProfileDetailsDTO request) {
+        userService.update(username,request);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{username}/change-profilePhoto")
+    public ResponseEntity<?> updateUserProfilePhoto(@PathVariable String username,@RequestPart(value = "profilePhoto") MultipartFile profilePhoto) throws IOException {
+        userService.updateProfilePicture(username,profilePhoto);
+
+        String stringProfilePhoto = userService.getProfilePhoto(username);
+        return ResponseEntity.ok().body(stringProfilePhoto);
     }
 
 }

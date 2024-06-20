@@ -45,7 +45,12 @@ public class PostController {
             String base64Image = Base64.getEncoder().encodeToString(imageContent);
             photos.add(base64Image);
         }
-
         return ResponseEntity.ok().body(photos);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO> getPost(@PathVariable Long postId) {
+        PostDTO post = postService.getById(postId);
+        return ResponseEntity.ok().body(post);
     }
 }

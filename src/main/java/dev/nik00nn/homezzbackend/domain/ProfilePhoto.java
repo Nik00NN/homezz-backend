@@ -33,4 +33,7 @@ public class ProfilePhoto {
     @Column(name = "file_creation_date", nullable = false)
     private LocalDate creationDate;
 
+    @OneToOne(mappedBy = "profilePicture")
+    private User user;
+
 }

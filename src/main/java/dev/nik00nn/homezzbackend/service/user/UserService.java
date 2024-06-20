@@ -3,10 +3,12 @@ package dev.nik00nn.homezzbackend.service.user;
 
 import dev.nik00nn.homezzbackend.domain.File;
 import dev.nik00nn.homezzbackend.domain.Post;
+import dev.nik00nn.homezzbackend.domain.ProfilePhoto;
 import dev.nik00nn.homezzbackend.domain.User;
 import dev.nik00nn.homezzbackend.dto.*;
 import dev.nik00nn.homezzbackend.exception.BadRequestException;
 import dev.nik00nn.homezzbackend.repository.IPostRepository;
+import dev.nik00nn.homezzbackend.repository.IProfilePhotoRepository;
 import dev.nik00nn.homezzbackend.repository.IUserRepository;
 import dev.nik00nn.homezzbackend.service.file.FileService;
 import org.modelmapper.ModelMapper;
@@ -31,12 +33,14 @@ public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
     private final IPostRepository postRepository;
+    private final IProfilePhotoRepository profilePhotoRepository;
     private final ModelMapper modelMapper;
     private final FileService fileService;
 
-    public UserService(IUserRepository userRepository, IPostRepository postRepository, ModelMapper modelMapper, FileService fileService) {
+    public UserService(IUserRepository userRepository, IPostRepository postRepository, IProfilePhotoRepository profilePhotoRepository, ModelMapper modelMapper, FileService fileService) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.profilePhotoRepository = profilePhotoRepository;
         this.modelMapper = modelMapper;
         this.fileService = fileService;
     }
@@ -53,11 +57,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserDTO getUserByUsername(String username) {
-        if (userRepository.findByUsername(username).isPresent()) {
-            return modelMapper.map(userRepository.findByUsername(username).get(), UserDTO.class);
-        }
-        return null;
+    public User getUserByUsername(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        return userOptional.orElse(null);
     }
 
     @Override
@@ -181,13 +183,40 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void update(UserDTO updatedUser) {
-
+    public void update(String username, UserProfileDetailsDTO profileDetails) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setEmailAddress(profileDetails.getEmailAddress());
+            user.setAddress(profileDetails.getAddress());
+            user.setPhoneNumber(profileDetails.getPhoneNumber());
+            userRepository.save(user);
+        }
     }
 
     @Override
     public User getUserByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmailAddress(email);
         return userOptional.orElse(null);
+    }
+
+    @Override
+    public void updateProfilePicture(String username, MultipartFile profilePicture) throws IOException {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            ProfilePhoto newProfilePhoto = fileService.saveProfilePhoto(profilePicture);
+            ProfilePhoto oldProfilePhoto = user.getProfilePicture();
+
+            user.setProfilePicture(null);
+            profilePhotoRepository.deleteById(oldProfilePhoto.getId());
+
+            if (newProfilePhoto != null) {
+                profilePhotoRepository.save(newProfilePhoto);
+                user.setProfilePicture(newProfilePhoto);
+                userRepository.save(user);
+            }
+        }
     }
 }
