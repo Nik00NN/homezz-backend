@@ -1,5 +1,6 @@
 package dev.nik00nn.homezzbackend.service.user;
 
+import dev.nik00nn.homezzbackend.domain.Post;
 import dev.nik00nn.homezzbackend.domain.User;
 import dev.nik00nn.homezzbackend.dto.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,5 +24,6 @@ public interface IUserService {
     void update(String username,UserProfileDetailsDTO profileDetails);
     User getUserByEmail(String email);
     void updateProfilePicture(String username, MultipartFile profilePicture) throws IOException;
+    Post updatePost(Long postId, PostDetailsDTO postDetailsDTO, List<MultipartFile> files) throws IOException;
 }
 

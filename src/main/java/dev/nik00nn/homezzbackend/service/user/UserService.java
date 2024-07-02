@@ -65,7 +65,7 @@ public class UserService implements IUserService {
     @Override
     public UserDTO addPost(String username, CreatePostDTO createPostRequest, List<MultipartFile> photos) throws IOException {
         User userForPost = userRepository.findByUsername(username).orElse(null);
-        List<Post> posts = new ArrayList<>();
+        List<Post> posts;
         if (userForPost == null) {
             return null;
         } else {
@@ -218,5 +218,33 @@ public class UserService implements IUserService {
                 userRepository.save(user);
             }
         }
+    }
+
+    @Override
+    public Post updatePost(Long postId, PostDetailsDTO postDetailsDTO, List<MultipartFile> files) throws IOException {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.setDescription(postDetailsDTO.getDescription());
+            post.setPrice(postDetailsDTO.getPrice());
+            post.setType(postDetailsDTO.getType());
+            post.setTitle(postDetailsDTO.getTitle());
+            post.setConstructionYear(postDetailsDTO.getConstructionYear());
+            post.setNumberOfRooms(postDetailsDTO.getNumberOfRooms());
+            post.setPropertyType(postDetailsDTO.getPropertyType());
+            post.setUsefulSurface(postDetailsDTO.getUsefulSurface());
+
+            List<File> photos = post.getPhotos();
+            if (files != null) {
+                for (MultipartFile file : files) {
+                    photos.add(fileService.saveImage(file));
+                }
+            }
+
+            post.setPhotos(photos);
+
+            return postRepository.save(post);
+        }
+        return null;
     }
 }

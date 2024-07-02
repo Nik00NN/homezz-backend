@@ -62,6 +62,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/posts/{postId}")
+    public ResponseEntity<Post> updatePost(@PathVariable Long postId, @RequestPart("postDetails") PostDetailsDTO postDetailsDTO, @RequestParam(name = "postPhotos", required = false) List<MultipartFile> files) throws IOException {
+        Post updatedPost = userService.updatePost(postId, postDetailsDTO, files);
+        return ResponseEntity.ok().body(updatedPost);
+    }
+
     @GetMapping("/{username}/favoritePosts/{postId}")
     public ResponseEntity<Boolean> isFavoritePost(@PathVariable String username, @PathVariable Long postId) {
         Boolean isPostFavorite = userService.isFavorite(username, postId);
