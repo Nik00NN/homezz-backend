@@ -1,20 +1,18 @@
 package dev.nik00nn.homezzbackend.controller;
 
 
-import dev.nik00nn.homezzbackend.domain.File;
 import dev.nik00nn.homezzbackend.domain.Post;
-import dev.nik00nn.homezzbackend.domain.ProfilePhoto;
-import dev.nik00nn.homezzbackend.domain.User;
 import dev.nik00nn.homezzbackend.dto.*;
-import dev.nik00nn.homezzbackend.service.file.FileService;
+import dev.nik00nn.homezzbackend.service.ForgotPassword.ForgotPasswordService;
 import dev.nik00nn.homezzbackend.service.user.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -22,11 +20,23 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final FileService fileService;
+    private final ForgotPasswordService forgotPasswordService;
 
-    public UserController(UserService userService, FileService fileService) {
+    public UserController(UserService userService, ForgotPasswordService forgotPasswordService) {
         this.userService = userService;
-        this.fileService = fileService;
+        this.forgotPasswordService = forgotPasswordService;
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordDTO request){
+        userService.changePassword(request.getEmail(),request.getNewPassword());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> sendEmail(@RequestBody @Valid ForgotPasswordDTO request) {
+        String token = forgotPasswordService.sendEmail(request.getEmail(), "Forgot Password", "Your token for recovering your password is:");
+        return ResponseEntity.ok().body(token);
     }
 
     @GetMapping("/{username}/files")
@@ -81,8 +91,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{username}/remove-favorite/{postId}")
-    public ResponseEntity<String> removeFavoritePost(@PathVariable String username, @PathVariable Long postId){
-        userService.deletePostFromFavorite(username,postId);
+    public ResponseEntity<String> removeFavoritePost(@PathVariable String username, @PathVariable Long postId) {
+        userService.deletePostFromFavorite(username, postId);
         return ResponseEntity.ok().body("delete fav succes");
     }
 
@@ -93,14 +103,14 @@ public class UserController {
     }
 
     @PutMapping("/{username}/edit-profile")
-    public ResponseEntity<?> updateUserProfileDetails(@PathVariable String username,@RequestBody UserProfileDetailsDTO request) {
-        userService.update(username,request);
+    public ResponseEntity<?> updateUserProfileDetails(@PathVariable String username, @RequestBody UserProfileDetailsDTO request) {
+        userService.update(username, request);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{username}/change-profilePhoto")
-    public ResponseEntity<?> updateUserProfilePhoto(@PathVariable String username,@RequestPart(value = "profilePhoto") MultipartFile profilePhoto) throws IOException {
-        userService.updateProfilePicture(username,profilePhoto);
+    public ResponseEntity<?> updateUserProfilePhoto(@PathVariable String username, @RequestPart(value = "profilePhoto") MultipartFile profilePhoto) throws IOException {
+        userService.updateProfilePicture(username, profilePhoto);
 
         String stringProfilePhoto = userService.getProfilePhoto(username);
         return ResponseEntity.ok().body(stringProfilePhoto);

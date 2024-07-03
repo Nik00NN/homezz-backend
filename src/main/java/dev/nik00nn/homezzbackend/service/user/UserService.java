@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,13 +37,15 @@ public class UserService implements IUserService {
     private final IProfilePhotoRepository profilePhotoRepository;
     private final ModelMapper modelMapper;
     private final FileService fileService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(IUserRepository userRepository, IPostRepository postRepository, IProfilePhotoRepository profilePhotoRepository, ModelMapper modelMapper, FileService fileService) {
+    public UserService(IUserRepository userRepository, IPostRepository postRepository, IProfilePhotoRepository profilePhotoRepository, ModelMapper modelMapper, FileService fileService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.profilePhotoRepository = profilePhotoRepository;
         this.modelMapper = modelMapper;
         this.fileService = fileService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -246,5 +249,15 @@ public class UserService implements IUserService {
             return postRepository.save(post);
         }
         return null;
+    }
+
+    @Override
+    public void changePassword(String email,String newPassword) {
+        Optional<User> byEmailAddress = userRepository.findByEmailAddress(email);
+        if (byEmailAddress.isPresent()) {
+            User user = byEmailAddress.get();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        }
     }
 }
